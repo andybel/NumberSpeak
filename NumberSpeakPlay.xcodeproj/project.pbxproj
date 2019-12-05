@@ -13,6 +13,7 @@
 		2358B28D2381775B00F56463 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2358B28C2381775B00F56463 /* Assets.xcassets */; };
 		2358B2902381775B00F56463 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2358B28F2381775B00F56463 /* Preview Assets.xcassets */; };
 		2358B2932381775B00F56463 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2358B2912381775B00F56463 /* LaunchScreen.storyboard */; };
+		23897533239819050092922D /* LangPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23897532239819050092922D /* LangPicker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		2358B28F2381775B00F56463 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2358B2922381775B00F56463 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2358B2942381775B00F56463 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		23897532239819050092922D /* LangPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LangPicker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				2358B2912381775B00F56463 /* LaunchScreen.storyboard */,
 				2358B2942381775B00F56463 /* Info.plist */,
 				2358B28E2381775B00F56463 /* Preview Content */,
+				23897532239819050092922D /* LangPicker.swift */,
 			);
 			path = NumberSpeakPlay;
 			sourceTree = "<group>";
@@ -149,6 +152,7 @@
 				2358B2872381775900F56463 /* AppDelegate.swift in Sources */,
 				2358B2892381775900F56463 /* SceneDelegate.swift in Sources */,
 				2358B28B2381775900F56463 /* ContentView.swift in Sources */,
+				23897533239819050092922D /* LangPicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
