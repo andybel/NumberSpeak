@@ -13,13 +13,122 @@ class LangVoice: ObservableObject {
     @Published var langId = "en-GB"
 }
 
-struct Key: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .font(.largeTitle)
-            .background(Color.white)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .foregroundColor(Color.black)
+class InputChecker: ObservableObject {
+    var testValue: Int = -1
+    @Published var inputValue = 0
+    @Published var inputNumbersArray = [Int]() {
+        didSet {
+            self.inputValue = Int(inputNumbersArray.compactMap({ "\($0)" }).joined()) ?? 0
+            self.matchesTestValue = self.inputValue == self.testValue
+        }
+    }
+    @Published var matchesTestValue = false
+
+    func randomiseTestVal() {
+        testValue = Int.random(in: 1..<100)
+    }
+
+    func clear() {
+        testValue = -1
+        inputNumbersArray.removeAll()
+        inputValue = 0
+    }
+}
+
+struct CustomKeyboard: View {
+
+//    @Binding var inputValue: Int
+//    @State private var inputNumbersArray = [Int]() {
+//        didSet {
+//            self.inputValue = Int(inputNumbersArray.compactMap({ "\($0)" }).joined()) ?? 0
+//        }
+//    }
+
+    @Binding var inputNumbersArray: [Int]
+
+    enum KeyIndex {
+        case num(Int)
+        case clear
+        case delete
+
+        var title: String {
+            switch self {
+            case .clear:
+                return "clear"
+            case .delete:
+                return "delete"
+            case .num(let numIdx):
+                return "\(numIdx)"
+            }
+        }
+
+        var intValue: Int {
+            switch self {
+            case .clear:
+                return 10
+            case .delete:
+                return 11
+            case .num(let numIdx):
+                return numIdx
+            }
+        }
+    }
+
+    struct Key: ViewModifier {
+        func body(content: Content) -> some View {
+            content
+                .font(.largeTitle)
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .foregroundColor(Color.black)
+        }
+    }
+
+    var body: some View {
+        ZStack {
+            GeometryReader { geo in
+                VStack {
+                    ForEach(0..<4) { row in
+                        self.KeyboardRow(for: row, geo: geo)
+                    }
+                }
+            }
+        }
+    }
+
+    fileprivate func KeyBtn(_ keyIdx: KeyIndex, geo: GeometryProxy) -> some View {
+
+        return Button(action: {
+
+            switch keyIdx {
+            case .num(let idx):
+                self.inputNumbersArray.append(idx)
+            case .delete:
+                _ = self.inputNumbersArray.popLast()
+            case .clear:
+                self.inputNumbersArray.removeAll()
+            }
+        }) {
+            Text(keyIdx.title)
+                .frame(width: geo.size.width * 0.3,
+                       height: geo.size.height * 0.25)
+                .modifier(Key())
+        }
+    }
+
+    private func KeyboardRow(for rowIdx: Int, geo: GeometryProxy) -> some View {
+
+        return HStack {
+            if rowIdx < 3 {
+                ForEach(1..<4) { col in
+                    self.KeyBtn(.num((rowIdx * 3) + col), geo: geo)
+                }
+            } else {
+                self.KeyBtn(.clear, geo: geo)
+                self.KeyBtn(.num(0), geo: geo)
+                self.KeyBtn(.delete, geo: geo)
+            }
+        }
     }
 }
 
@@ -34,86 +143,12 @@ struct ContentView: View {
     // MARK: State vars
     @State private var loopIsActive = false
     @State private var numberOfPeople = false
-    @State private var inputNumbers = [Int]() {
-        didSet {
-
-            if let inputJoined = Int(inputNumbers.compactMap({ "\($0)" }).joined()) {
-
-                if inputJoined == numberForTest {
-                    isShowingForTestSuccess = true
-                }
-            }
-        }
-    }
-    @State private var isShowingForTestSuccess = false
     @State private var isShowingLangPicker = false
-    @State private var numberForTest = -1
+    //@State private var numberForTest = -1
+    //@State private var keyboardInput: Int = 0
 
     @ObservedObject var selectedLang = LangVoice()
-
-    enum KeyUtilIndex: Int {
-        case clear = 10
-        case delete = 12
-    }
-
-    private func keyText(for idx: Int) -> String {
-        switch idx {
-        case KeyUtilIndex.clear.rawValue:
-            return "clear"
-        case KeyUtilIndex.delete.rawValue:
-            return "delete"
-        default:
-            return "\(idx)"
-        }
-    }
-
-    fileprivate func KeyBtn(_ idx: Int, geo: GeometryProxy) -> some View {
-
-        return Button(action: {
-            switch idx {
-            case KeyUtilIndex.clear.rawValue:
-                self.inputNumbers.removeAll()
-            case KeyUtilIndex.delete.rawValue:
-                guard self.inputNumbers.count > 0 else { return }
-                self.inputNumbers.removeLast()
-            default:
-                self.inputNumbers.append(idx)
-            }
-
-        }) {
-            Text(keyText(for: idx))
-                .frame(width: geo.size.width * 0.3,
-                       height: geo.size.height * 0.25)
-                .modifier(Key())
-        }
-    }
-
-    private func KeyboardRow(for rowIdx: Int, geo: GeometryProxy) -> some View {
-
-        return HStack {
-            if rowIdx < 3 {
-                ForEach(1..<4) { col in
-                    self.KeyBtn(((rowIdx * 3) + col), geo: geo)
-                }
-            } else {
-                self.KeyBtn(KeyUtilIndex.clear.rawValue, geo: geo)
-                self.KeyBtn(0, geo: geo)
-                self.KeyBtn(KeyUtilIndex.delete.rawValue, geo: geo)
-            }
-        }
-    }
-
-    fileprivate func KeyboardView() -> some View {
-        return ZStack {
-            GeometryReader { geo in
-                VStack {
-                    ForEach(0..<4) { row in
-                        self.KeyboardRow(for: row, geo: geo)
-                    }
-                }
-            }
-        }
-    }
+    @ObservedObject var inputChecker = InputChecker()
 
     private func speakString(stringToSpeak: String){
 
@@ -133,9 +168,8 @@ struct ContentView: View {
     }
 
     private func startTestWithRandomNumber() {
-
-        numberForTest = Int.random(in: 1..<100)
-        speakString(stringToSpeak: "\(numberForTest)")
+        self.inputChecker.randomiseTestVal()
+        speakString(stringToSpeak: "\(self.inputChecker.testValue)")
     }
 
     var body: some View {
@@ -177,7 +211,7 @@ struct ContentView: View {
                                 Image("playBtn").renderingMode(.original)
                             }
 
-                            Text(self.inputNumbers.compactMap({ "\($0)" }).joined())
+                            Text("\(self.inputChecker.inputValue)")
                                 .foregroundColor(.white)
                                 .font(self.inputFont)
                                 .frame(height: 90)
@@ -216,7 +250,7 @@ struct ContentView: View {
                     }
                     .frame(height: geo.size.height * 0.05)
 
-                    self.KeyboardView()
+                    CustomKeyboard(inputNumbersArray: self.$inputChecker.inputNumbersArray)
                         .frame(height: geo.size.height * 0.3)
                 }
             }
@@ -224,10 +258,10 @@ struct ContentView: View {
         .sheet(isPresented: $isShowingLangPicker) {
             LangPicker(selectedVoiceId: self.$selectedLang.langId)
         }
-        .alert(isPresented: $isShowingForTestSuccess) { () -> Alert in
-            Alert(title: Text("\(numberForTest)"), message: Text("Correct!!"), dismissButton: .default(Text("Continue"), action: {
-                self.inputNumbers.removeAll()
-                self.numberForTest = -1
+        .alert(isPresented: $inputChecker.matchesTestValue) { () -> Alert in
+            Alert(title: Text("Win"), message: Text("Correct!!"), dismissButton: .default(Text("Continue"), action: {
+
+                self.inputChecker.clear()
             }))
         }
     }
