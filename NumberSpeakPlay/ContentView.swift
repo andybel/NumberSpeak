@@ -10,11 +10,12 @@ import SwiftUI
 import AVFoundation
 
 class LangVoice: ObservableObject {
-    @Published var langId = "en-GB"
+    @Published var langId = UserDefaults.standard.string(forKey: "SelectedLang") ?? "en-GB"
 }
 
 class InputChecker: ObservableObject {
     var testValue: Int = -1
+    var maxValue = 100
     @Published var inputValue = 0
     @Published var inputNumbersArray = [Int]() {
         didSet {
@@ -25,110 +26,13 @@ class InputChecker: ObservableObject {
     @Published var matchesTestValue = false
 
     func randomiseTestVal() {
-        testValue = Int.random(in: 1..<100)
+        testValue = Int.random(in: 1..<maxValue)
     }
 
     func clear() {
         testValue = -1
         inputNumbersArray.removeAll()
         inputValue = 0
-    }
-}
-
-struct CustomKeyboard: View {
-
-//    @Binding var inputValue: Int
-//    @State private var inputNumbersArray = [Int]() {
-//        didSet {
-//            self.inputValue = Int(inputNumbersArray.compactMap({ "\($0)" }).joined()) ?? 0
-//        }
-//    }
-
-    @Binding var inputNumbersArray: [Int]
-
-    enum KeyIndex {
-        case num(Int)
-        case clear
-        case delete
-
-        var title: String {
-            switch self {
-            case .clear:
-                return "clear"
-            case .delete:
-                return "delete"
-            case .num(let numIdx):
-                return "\(numIdx)"
-            }
-        }
-
-        var intValue: Int {
-            switch self {
-            case .clear:
-                return 10
-            case .delete:
-                return 11
-            case .num(let numIdx):
-                return numIdx
-            }
-        }
-    }
-
-    struct Key: ViewModifier {
-        func body(content: Content) -> some View {
-            content
-                .font(.largeTitle)
-                .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .foregroundColor(Color.black)
-        }
-    }
-
-    var body: some View {
-        ZStack {
-            GeometryReader { geo in
-                VStack {
-                    ForEach(0..<4) { row in
-                        self.KeyboardRow(for: row, geo: geo)
-                    }
-                }
-            }
-        }
-    }
-
-    fileprivate func KeyBtn(_ keyIdx: KeyIndex, geo: GeometryProxy) -> some View {
-
-        return Button(action: {
-
-            switch keyIdx {
-            case .num(let idx):
-                self.inputNumbersArray.append(idx)
-            case .delete:
-                _ = self.inputNumbersArray.popLast()
-            case .clear:
-                self.inputNumbersArray.removeAll()
-            }
-        }) {
-            Text(keyIdx.title)
-                .frame(width: geo.size.width * 0.3,
-                       height: geo.size.height * 0.25)
-                .modifier(Key())
-        }
-    }
-
-    private func KeyboardRow(for rowIdx: Int, geo: GeometryProxy) -> some View {
-
-        return HStack {
-            if rowIdx < 3 {
-                ForEach(1..<4) { col in
-                    self.KeyBtn(.num((rowIdx * 3) + col), geo: geo)
-                }
-            } else {
-                self.KeyBtn(.clear, geo: geo)
-                self.KeyBtn(.num(0), geo: geo)
-                self.KeyBtn(.delete, geo: geo)
-            }
-        }
     }
 }
 
@@ -144,8 +48,11 @@ struct ContentView: View {
     @State private var loopIsActive = false
     @State private var numberOfPeople = false
     @State private var isShowingLangPicker = false
-    //@State private var numberForTest = -1
-    //@State private var keyboardInput: Int = 0
+    @State private var isShowingModePicker = false
+    @State private var isShowingRangePicker = false
+    @State private var maxNumberRange: Double = 100
+
+    @State private var testMode = TestMode.numbers
 
     @ObservedObject var selectedLang = LangVoice()
     @ObservedObject var inputChecker = InputChecker()
@@ -235,20 +142,33 @@ struct ContentView: View {
 
                             HStack {
                                 Text("Mode:").foregroundColor(.black)
-                                Button("1 2 3") {
-                                    print("select mode!")
+                                Button("\(self.testMode.rawValue.capitalized)") {
+                                    self.isShowingModePicker.toggle()
                                 }
                             }
                             .frame(width: geo.size.width * 0.3)
 
-                            Button("< 1,000") {
-                                print("select mode range")
+                            if self.testMode == .numbers {
+                                Button("< \(self.maxNumberRange)") {
+                                    self.isShowingRangePicker.toggle()
+                                }
+                                .foregroundColor(.black)
+                                .frame(width: geo.size.width * 0.3)
                             }
-                            .foregroundColor(.black)
-                            .frame(width: geo.size.width * 0.3)
                         }
                     }
                     .frame(height: geo.size.height * 0.05)
+
+                    if self.isShowingRangePicker {
+
+                        HStack {
+                            Slider(value: self.$maxNumberRange, in: 1...1000, step: 0.1)
+                            Button("done") {
+                                self.inputChecker.maxValue = Int(self.maxNumberRange)
+                                self.isShowingRangePicker.toggle()
+                            }
+                        }
+                    }
 
                     CustomKeyboard(inputNumbersArray: self.$inputChecker.inputNumbersArray)
                         .frame(height: geo.size.height * 0.3)
@@ -258,6 +178,9 @@ struct ContentView: View {
         .sheet(isPresented: $isShowingLangPicker) {
             LangPicker(selectedVoiceId: self.$selectedLang.langId)
         }
+//        .sheet(isPresented: $isShowingModePicker) {
+//            ModeSelect(selectedMode: self.$testMode)
+//        }
         .alert(isPresented: $inputChecker.matchesTestValue) { () -> Alert in
             Alert(title: Text("Win"), message: Text("Correct!!"), dismissButton: .default(Text("Continue"), action: {
 

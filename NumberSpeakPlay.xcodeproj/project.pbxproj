@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		234F6CF22399A75C009389A1 /* ModeSelect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234F6CF12399A75C009389A1 /* ModeSelect.swift */; };
+		234F6CF42399A987009389A1 /* CustomKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234F6CF32399A987009389A1 /* CustomKeyboard.swift */; };
 		2358B2872381775900F56463 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2358B2862381775900F56463 /* AppDelegate.swift */; };
 		2358B2892381775900F56463 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2358B2882381775900F56463 /* SceneDelegate.swift */; };
 		2358B28B2381775900F56463 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2358B28A2381775900F56463 /* ContentView.swift */; };
@@ -17,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		234F6CF12399A75C009389A1 /* ModeSelect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeSelect.swift; sourceTree = "<group>"; };
+		234F6CF32399A987009389A1 /* CustomKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomKeyboard.swift; sourceTree = "<group>"; };
 		2358B2832381775900F56463 /* NumberSpeakPlay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NumberSpeakPlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2358B2862381775900F56463 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2358B2882381775900F56463 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -66,6 +70,8 @@
 				2358B2942381775B00F56463 /* Info.plist */,
 				2358B28E2381775B00F56463 /* Preview Content */,
 				23897532239819050092922D /* LangPicker.swift */,
+				234F6CF12399A75C009389A1 /* ModeSelect.swift */,
+				234F6CF32399A987009389A1 /* CustomKeyboard.swift */,
 			);
 			path = NumberSpeakPlay;
 			sourceTree = "<group>";
@@ -152,7 +158,9 @@
 				2358B2872381775900F56463 /* AppDelegate.swift in Sources */,
 				2358B2892381775900F56463 /* SceneDelegate.swift in Sources */,
 				2358B28B2381775900F56463 /* ContentView.swift in Sources */,
+				234F6CF42399A987009389A1 /* CustomKeyboard.swift in Sources */,
 				23897533239819050092922D /* LangPicker.swift in Sources */,
+				234F6CF22399A75C009389A1 /* ModeSelect.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

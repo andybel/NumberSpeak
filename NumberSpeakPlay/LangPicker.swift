@@ -24,9 +24,10 @@ struct LangPicker: View {
 
     @State private var availableVoices = [AVSpeechSynthesisVoice]()
 
-    func availableLangsContainsVoice(voice: AVSpeechSynthesisVoice) -> Bool {
-        for addedVoice in availableVoices {
-            if(voice.language == addedVoice.language){
+    func langsArrayContainsVoice(voice: AVSpeechSynthesisVoice, langs: [AVSpeechSynthesisVoice]) -> Bool {
+
+        for addedVoice in langs {
+            if(voice.language.contains(addedVoice.language)){
                 return true
             }
         }
@@ -38,7 +39,7 @@ struct LangPicker: View {
         let voices = AVSpeechSynthesisVoice.speechVoices()
         var voicesTemp = [AVSpeechSynthesisVoice]()
         for voice in voices {
-            if(!availableLangsContainsVoice(voice: voice)){
+            if(!langsArrayContainsVoice(voice: voice, langs: voicesTemp)) {
                 voicesTemp.append(voice)
                 print("adding: \(voice.language)\n")
             }
@@ -61,22 +62,20 @@ struct LangPicker: View {
 
                         Button(lang.displayName()) {
                             print("SELECTED: \(lang.language)")
-
+                            UserDefaults.standard.set(lang.language, forKey: "SelectedLang")
                             self.selectedVoiceId = lang.language
                             self.presentationMode.wrappedValue.dismiss()
                         }
 
-//                      Text(lang.displayName())
-//
-//                    }.onTapGesture {
-//                        print("SELECTED: \(lang.language)")
-//                       self.selectedVoiceId = lang.language
-//                       self.presentationMode.wrappedValue.dismiss()
+                        if lang.language == self.selectedVoiceId {
+                            Image(systemName: "checkmark.circle.fill")
+                                .frame(width: 30, height: 30, alignment: .trailing)
+                        }
                     }
                 }
             }.onAppear {
                 self.availableVoices = self.loadAvailableLangs()
-            }
+            }.navigationBarTitle("Select Language")
         }
     }
 }
