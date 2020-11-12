@@ -43,26 +43,26 @@ struct CustomKeyboard: View {
     struct Key: ViewModifier {
         func body(content: Content) -> some View {
             content
-                .font(.largeTitle)
-                .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .foregroundColor(Color.black)
+                .font(.title)
+                //.background(Color.white)
+                //.clipShape(RoundedRectangle(cornerRadius: 8))
+                .foregroundColor(Color.white)
         }
     }
 
     var body: some View {
-        ZStack {
-            GeometryReader { geo in
-                VStack {
-                    ForEach(0..<4) { row in
-                        self.KeyboardRow(for: row, geo: geo)
-                    }
+        VStack {
+            ForEach(0..<4) { row in
+                self.KeyboardRow(for: row)
+                if row != 3 {
+                    Divider()
                 }
             }
         }
+        //.padding()
     }
 
-    fileprivate func KeyBtn(_ keyIdx: KeyIndex, geo: GeometryProxy) -> some View {
+    fileprivate func KeyBtn(_ keyIdx: KeyIndex) -> some View {
 
         return Button(action: {
 
@@ -76,24 +76,39 @@ struct CustomKeyboard: View {
             }
         }) {
             Text(keyIdx.title)
-                .frame(width: geo.size.width * 0.3,
-                       height: geo.size.height * 0.25)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                //.padding()
                 .modifier(Key())
         }
     }
 
-    private func KeyboardRow(for rowIdx: Int, geo: GeometryProxy) -> some View {
+    private func KeyboardRow(for rowIdx: Int) -> some View {
 
         return HStack {
             if rowIdx < 3 {
                 ForEach(1..<4) { col in
-                    self.KeyBtn(.num((rowIdx * 3) + col), geo: geo)
+                    self.KeyBtn(.num((rowIdx * 3) + col))
+                    if col != 3 {
+                        Divider()
+                    }
                 }
             } else {
-                self.KeyBtn(.clear, geo: geo)
-                self.KeyBtn(.num(0), geo: geo)
-                self.KeyBtn(.delete, geo: geo)
+                self.KeyBtn(.clear)
+                Divider()
+                self.KeyBtn(.num(0))
+                Divider()
+                self.KeyBtn(.delete)
             }
+        }
+    }
+}
+
+struct CustomKeyboard_Previews: PreviewProvider {
+    
+    static var previews: some View {
+        ZStack {
+            Color(.gray)
+            CustomKeyboard(inputNumbersArray: .constant([Int]()))
         }
     }
 }

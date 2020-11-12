@@ -87,92 +87,101 @@ struct ContentView: View {
                            endPoint: .bottom)
                 .edgesIgnoringSafeArea(Edge.Set.all)
 
-            GeometryReader { geo in
 
-                VStack {
-                    HStack {
-                        Text("NumberSpeak")
-                            .foregroundColor(.white)
-                            .font(self.titleFont)
-                            .frame(width: geo.size.width * 0.75,
-                               alignment: .leading)
+            VStack {
+                
+                HStack {
+                    Text("NumberSpeak")
+                        .foregroundColor(.white)
+                        .font(self.titleFont)
+
+                    Button(action: {
+                        self.isShowingLangPicker.toggle()
+                    }) {
+                        Image(self.selectedLang.langId)
+                            .renderingMode(.original)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 30)
+                    }
+                }
+
+                ZStack {
+                    VStack {
 
                         Button(action: {
-                            self.isShowingLangPicker.toggle()
+                            self.startTestWithRandomNumber()
                         }) {
-                            Image(self.selectedLang.langId)
-                                .renderingMode(.original)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: geo.size.width * 0.1)
+                            Image("playBtn").renderingMode(.original)
                         }
+
+                        Text("\(self.inputChecker.inputValue)")
+                            .foregroundColor(.white)
+                            .font(self.inputFont)
+                            .minimumScaleFactor(0.01)
+                            .frame(height: 90)
+                            .animation(.easeIn)
                     }
-                    .frame(height: geo.size.height * 0.2)
-
-                    ZStack {
-                        VStack {
-
-                            Button(action: {
-                                self.startTestWithRandomNumber()
-                            }) {
-                                Image("playBtn").renderingMode(.original)
-                            }
-
-                            Text("\(self.inputChecker.inputValue)")
-                                .foregroundColor(.white)
-                                .font(self.inputFont)
-                                .frame(height: 90)
-                        }
-                    }
-                    .frame(height: geo.size.height * 0.4)
+                }
 
 
-                    ZStack {
+                ZStack {
 
-                        Color(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    Color(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                    HStack {
 
                         HStack {
-
                             Toggle(isOn: self.$loopIsActive) {
                                 Image(systemName: "arrow.2.circlepath")
                                     .renderingMode(.original)
                             }
-                            .frame(width: geo.size.width * 0.3, alignment: .leading)
 
-                            HStack {
-                                Text("Mode:").foregroundColor(.black)
-                                Button("\(self.testMode.rawValue.capitalized)") {
-                                    self.isShowingModePicker.toggle()
-                                }
+                        }
+                        .frame(width: 70)
+                        .padding(.horizontal, /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
+                        
+                        Divider()
+                        
+                        HStack {
+                            Text("Mode:").foregroundColor(.black)
+                            Button("\(self.testMode.rawValue.capitalized)") {
+                                self.isShowingModePicker.toggle()
                             }
-                            .frame(width: geo.size.width * 0.3)
-
+                        }
+                        .padding(.horizontal, /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
+                        
+                        Divider()
+                        
+                        HStack {
                             if self.testMode == .numbers {
-                                Button("< \(self.maxNumberRange)") {
+                                Button("< \(Int(self.maxNumberRange))") {
                                     self.isShowingRangePicker.toggle()
                                 }
                                 .foregroundColor(.black)
-                                .frame(width: geo.size.width * 0.3)
+                                .animation(.easeIn)
                             }
                         }
+                        .padding(.horizontal, /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
                     }
-                    .frame(height: geo.size.height * 0.05)
-
-                    if self.isShowingRangePicker {
-
-                        HStack {
-                            Slider(value: self.$maxNumberRange, in: 1...1000, step: 0.1)
-                            Button("done") {
-                                self.inputChecker.maxValue = Int(self.maxNumberRange)
-                                self.isShowingRangePicker.toggle()
-                            }
-                        }
-                    }
-
-                    CustomKeyboard(inputNumbersArray: self.$inputChecker.inputNumbersArray)
-                        .frame(height: geo.size.height * 0.3)
                 }
+                .frame(height: 40)
+                .padding(.horizontal, /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
+
+                if self.isShowingRangePicker {
+
+                    HStack {
+                        Slider(value: self.$maxNumberRange, in: 1...1000, step: 0.1)
+                        Button("done") {
+                            self.inputChecker.maxValue = Int(self.maxNumberRange)
+                            self.isShowingRangePicker.toggle()
+                        }
+                    }
+                    .padding(.horizontal, /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
+                }
+
+                CustomKeyboard(inputNumbersArray: self.$inputChecker.inputNumbersArray)
             }
         }
         .sheet(isPresented: $isShowingLangPicker) {
