@@ -9,6 +9,34 @@
 import SwiftUI
 import AVFoundation
 
+struct AnimatedRing: View {
+    @Binding var fromVal: CGFloat
+    let col: Color
+    
+    var body: some View {
+        ZStack {
+//            Circle()
+//                .stroke(Color.gray, style: StrokeStyle(lineWidth: 10,
+//                                                       lineCap: .round,
+//                                                       lineJoin: .round))
+//                .opacity(0.4)
+            Circle()
+                .trim(from: fromVal, to: 1.0)
+                .stroke(col, style: StrokeStyle(lineWidth: 10,
+                                                       lineCap: .round,
+                                                       lineJoin: .round))
+                .rotationEffect(.degrees(90))
+                .rotation3DEffect(
+                    Angle(degrees: 180),
+                    axis: (x: 1.0, y: 0.0, z: 0.0))
+                .animation(.easeOut(duration: 5))
+        }
+        //.frame(width: 100, height: 100)
+    }
+}
+
+
+
 class LangVoice: ObservableObject {
     @Published var langId = UserDefaults.standard.string(forKey: "SelectedLang") ?? "en-GB"
 }
@@ -41,6 +69,7 @@ struct ContentView: View {
     // MARK: styles
     private let topGradCol = Color(red: 235.0 / 255.0, green: 199.0 / 255.0, blue: 204.0 / 255.0)
     private let bottomGradCol = Color(red: 74.0 / 255.0, green: 199.0 / 255.0, blue: 226.0 / 255.0)
+    
     private let titleFont = Font.system(size: 42, weight: .bold)
     private let inputFont = Font.system(size: 85, weight: .bold)
 
@@ -51,6 +80,8 @@ struct ContentView: View {
     @State private var isShowingModePicker = false
     @State private var isShowingRangePicker = false
     @State private var maxNumberRange: Double = 100
+    
+    @State private var timerFromVal: CGFloat = 0.0
 
     @State private var testMode = TestMode.numbers
 
@@ -75,6 +106,7 @@ struct ContentView: View {
     }
 
     private func startTestWithRandomNumber() {
+        self.timerFromVal = 0.99
         self.inputChecker.randomiseTestVal()
         speakString(stringToSpeak: "\(self.inputChecker.testValue)")
     }
@@ -104,17 +136,31 @@ struct ContentView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 30)
                     }
+                    .sheet(isPresented: $isShowingLangPicker) {
+                        LangPicker(selectedVoiceId: self.$selectedLang.langId)
+                    }
                 }
 
                 ZStack {
                     VStack {
 
-                        Button(action: {
-                            self.startTestWithRandomNumber()
-                        }) {
-                            Image("playBtn").renderingMode(.original)
+                        ZStack {
+                            
+                            Button(action: {
+                                self.startTestWithRandomNumber()
+                            }) {
+                                Image("playBtn").renderingMode(.original)
+                            }
+                            
+                            if loopIsActive {
+                                withAnimation {
+                                    AnimatedRing(fromVal: $timerFromVal, col: .purple)
+                                }
+                            }
                         }
-
+                        .frame(width: 180, height: 180, alignment: .center)
+                        
+                        
                         Text("\(self.inputChecker.inputValue)")
                             .foregroundColor(.white)
                             .font(self.inputFont)
@@ -137,7 +183,6 @@ struct ContentView: View {
                                 Image(systemName: "arrow.2.circlepath")
                                     .renderingMode(.original)
                             }
-
                         }
                         .frame(width: 70)
                         .padding(.horizontal, /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
@@ -149,6 +194,9 @@ struct ContentView: View {
                             Button("\(self.testMode.rawValue.capitalized)") {
                                 self.isShowingModePicker.toggle()
                             }
+                            .sheet(isPresented: $isShowingModePicker) {
+                                ModeSelect(selectedMode: self.$testMode)
+                            }
                         }
                         .padding(.horizontal, /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
                         
@@ -157,8 +205,11 @@ struct ContentView: View {
                         HStack {
                             if self.testMode == .numbers {
                                 Button("< \(Int(self.maxNumberRange))") {
-                                    self.isShowingRangePicker.toggle()
+                                    withAnimation {
+                                        self.isShowingRangePicker.toggle()
+                                    }
                                 }
+                                .frame(width: 60)
                                 .foregroundColor(.black)
                                 .animation(.easeIn)
                             }
@@ -175,7 +226,9 @@ struct ContentView: View {
                         Slider(value: self.$maxNumberRange, in: 1...1000, step: 0.1)
                         Button("done") {
                             self.inputChecker.maxValue = Int(self.maxNumberRange)
-                            self.isShowingRangePicker.toggle()
+                            withAnimation {
+                                self.isShowingRangePicker.toggle()
+                            }
                         }
                     }
                     .padding(.horizontal, /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
@@ -184,12 +237,6 @@ struct ContentView: View {
                 CustomKeyboard(inputNumbersArray: self.$inputChecker.inputNumbersArray)
             }
         }
-        .sheet(isPresented: $isShowingLangPicker) {
-            LangPicker(selectedVoiceId: self.$selectedLang.langId)
-        }
-//        .sheet(isPresented: $isShowingModePicker) {
-//            ModeSelect(selectedMode: self.$testMode)
-//        }
         .alert(isPresented: $inputChecker.matchesTestValue) { () -> Alert in
             Alert(title: Text("Win"), message: Text("Correct!!"), dismissButton: .default(Text("Continue"), action: {
 

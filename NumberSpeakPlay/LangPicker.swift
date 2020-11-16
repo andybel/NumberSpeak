@@ -80,8 +80,8 @@ struct LangPicker: View {
     }
 }
 
-//struct LangPicker_Previews: PreviewProvider {
-//    static var previews: some View {
-//        LangPicker(selectedVoice: LangVoice())
-//    }
-//}
+struct LangPicker_Previews: PreviewProvider {
+    static var previews: some View {
+        LangPicker(selectedVoiceId: .constant("test-voice-id"))
+    }
+}
