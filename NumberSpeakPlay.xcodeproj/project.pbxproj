@@ -15,6 +15,8 @@
 		2358B28D2381775B00F56463 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2358B28C2381775B00F56463 /* Assets.xcassets */; };
 		2358B2902381775B00F56463 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2358B28F2381775B00F56463 /* Preview Assets.xcassets */; };
 		2358B2932381775B00F56463 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2358B2912381775B00F56463 /* LaunchScreen.storyboard */; };
+		237A2F3A2562E393003E5E23 /* Styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 237A2F392562E393003E5E23 /* Styles.swift */; };
+		237A2F3D2562E432003E5E23 /* AnimatedRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 237A2F3C2562E432003E5E23 /* AnimatedRing.swift */; };
 		23897533239819050092922D /* LangPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23897532239819050092922D /* LangPicker.swift */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +31,8 @@
 		2358B28F2381775B00F56463 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2358B2922381775B00F56463 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2358B2942381775B00F56463 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		237A2F392562E393003E5E23 /* Styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Styles.swift; sourceTree = "<group>"; };
+		237A2F3C2562E432003E5E23 /* AnimatedRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedRing.swift; sourceTree = "<group>"; };
 		23897532239819050092922D /* LangPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LangPicker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -72,6 +76,8 @@
 				23897532239819050092922D /* LangPicker.swift */,
 				234F6CF12399A75C009389A1 /* ModeSelect.swift */,
 				234F6CF32399A987009389A1 /* CustomKeyboard.swift */,
+				237A2F392562E393003E5E23 /* Styles.swift */,
+				237A2F3C2562E432003E5E23 /* AnimatedRing.swift */,
 			);
 			path = NumberSpeakPlay;
 			sourceTree = "<group>";
@@ -155,7 +161,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				237A2F3D2562E432003E5E23 /* AnimatedRing.swift in Sources */,
 				2358B2872381775900F56463 /* AppDelegate.swift in Sources */,
+				237A2F3A2562E393003E5E23 /* Styles.swift in Sources */,
 				2358B2892381775900F56463 /* SceneDelegate.swift in Sources */,
 				2358B28B2381775900F56463 /* ContentView.swift in Sources */,
 				234F6CF42399A987009389A1 /* CustomKeyboard.swift in Sources */,

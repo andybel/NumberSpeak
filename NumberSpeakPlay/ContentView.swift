@@ -9,34 +9,6 @@
 import SwiftUI
 import AVFoundation
 
-struct AnimatedRing: View {
-    @Binding var fromVal: CGFloat
-    let col: Color
-    
-    var body: some View {
-        ZStack {
-//            Circle()
-//                .stroke(Color.gray, style: StrokeStyle(lineWidth: 10,
-//                                                       lineCap: .round,
-//                                                       lineJoin: .round))
-//                .opacity(0.4)
-            Circle()
-                .trim(from: fromVal, to: 1.0)
-                .stroke(col, style: StrokeStyle(lineWidth: 10,
-                                                       lineCap: .round,
-                                                       lineJoin: .round))
-                .rotationEffect(.degrees(90))
-                .rotation3DEffect(
-                    Angle(degrees: 180),
-                    axis: (x: 1.0, y: 0.0, z: 0.0))
-                .animation(.easeOut(duration: 5))
-        }
-        //.frame(width: 100, height: 100)
-    }
-}
-
-
-
 class LangVoice: ObservableObject {
     @Published var langId = UserDefaults.standard.string(forKey: "SelectedLang") ?? "en-GB"
 }
@@ -66,16 +38,8 @@ class InputChecker: ObservableObject {
 
 struct ContentView: View {
 
-    // MARK: styles
-    private let topGradCol = Color(red: 235.0 / 255.0, green: 199.0 / 255.0, blue: 204.0 / 255.0)
-    private let bottomGradCol = Color(red: 74.0 / 255.0, green: 199.0 / 255.0, blue: 226.0 / 255.0)
-    
-    private let titleFont = Font.system(size: 42, weight: .bold)
-    private let inputFont = Font.system(size: 85, weight: .bold)
-
     // MARK: State vars
     @State private var loopIsActive = false
-    @State private var numberOfPeople = false
     @State private var isShowingLangPicker = false
     @State private var isShowingModePicker = false
     @State private var isShowingRangePicker = false
@@ -114,7 +78,7 @@ struct ContentView: View {
     var body: some View {
 
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [topGradCol, bottomGradCol]),
+            LinearGradient(gradient: Gradient(colors: [Styles.topGradCol, Styles.bottomGradCol]),
                            startPoint: .top,
                            endPoint: .bottom)
                 .edgesIgnoringSafeArea(Edge.Set.all)
@@ -125,7 +89,7 @@ struct ContentView: View {
                 HStack {
                     Text("NumberSpeak")
                         .foregroundColor(.white)
-                        .font(self.titleFont)
+                        .font(Styles.titleFont)
 
                     Button(action: {
                         self.isShowingLangPicker.toggle()
@@ -163,7 +127,7 @@ struct ContentView: View {
                         
                         Text("\(self.inputChecker.inputValue)")
                             .foregroundColor(.white)
-                            .font(self.inputFont)
+                            .font(Styles.inputFont)
                             .minimumScaleFactor(0.01)
                             .frame(height: 90)
                             .animation(.easeIn)
